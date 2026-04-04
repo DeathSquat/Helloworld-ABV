@@ -284,7 +284,7 @@ const Auth = () => {
                           </div>
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-2 bg-card/30 p-3 rounded-lg border border-border/30 hover:border-golden/30 transition-colors">
+                      {/* <div className="flex items-center space-x-2 bg-card/30 p-3 rounded-lg border border-border/30 hover:border-golden/30 transition-colors">
                         <RadioGroupItem value="admin" id="admin" />
                         <Label htmlFor="admin" className="flex items-center gap-2 cursor-pointer flex-1">
                           <Sparkles className="w-4 h-4 text-golden" />
@@ -293,7 +293,7 @@ const Auth = () => {
                             <div className="text-xs text-muted-foreground">Manage platform and users</div>
                           </div>
                         </Label>
-                      </div>
+                      </div> */}
                     </RadioGroup>
                   </div>
                   {error && (
