@@ -24,14 +24,23 @@ const DivisionSelection = () => {
   const [selectedDivision, setSelectedDivision] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const { toast } = useToast();
   const userName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || 'Guest';
 
   useEffect(() => {
-    // No need to check for teacher role here as it's handled in the ProtectedRoute
-    // This allows the component to be used by both logged-in and guest users
-  }, [user, navigate]);
+    // Check if user is admin and redirect to admin dashboard
+    if (userProfile?.role === 'admin') {
+      navigate('/admin/dashboard');
+      return;
+    }
+    
+    // Check if user is teacher and redirect to teacher dashboard
+    if (userProfile?.role === 'teacher') {
+      navigate('/teacher/dashboard');
+      return;
+    }
+  }, [userProfile, navigate]);
 
   const divisions = [
     {

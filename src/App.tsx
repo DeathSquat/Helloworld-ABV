@@ -16,7 +16,8 @@ import CodingNavbar from "./sections/coding/components/CodingNavbar";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Languages from "./pages/Languages";
-import CreateRoadmap from "./pages/CreateRoadmap";
+// TypeScript language server refresh - Roadmap imports verified
+import CreateRoadmap from "./pages/CreateRoadmap.tsx";
 import CodeIDE from "./pages/CodeIDE";
 import Pricing from "./pages/Pricing";
 import Leaderboard from "./pages/Leaderboard";
@@ -34,6 +35,8 @@ import AcademicGames from "./sections/academic/pages/AcademicGames";
 import FirebaseTest from "./components/FirebaseTest";
 import UserCreationTest from "./components/UserCreationTest";
 import ProgressDashboard from "./components/ProgressDashboard";
+// TypeScript language server refresh - Roadmaps import verified  
+import Roadmaps from "./pages/Roadmaps.tsx";
 
 // Academic Section Imports
 import AcademicDashboard from "./sections/academic/pages/AcademicDashboard";
@@ -79,7 +82,10 @@ const AppContent = () => {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    }}>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
@@ -237,6 +243,12 @@ const AppContent = () => {
         <Route path="/ide" element={
           <ProtectedRoute>
             <CodeIDE />
+          </ProtectedRoute>
+        } />
+        <Route path="/roadmaps" element={
+          <ProtectedRoute>
+            <Navbar />
+            <Roadmaps />
           </ProtectedRoute>
         } />
         <Route path="/pricing" element={

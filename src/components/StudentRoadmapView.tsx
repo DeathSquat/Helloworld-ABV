@@ -310,7 +310,7 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
         </TabsList>
 
         {/* Overview Tab - Enhanced Flowchart */}
-        <TabsContent value="overview" className="space-y-8 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-8 bg-white dark:bg-gray-900/50 mt-6">
+        <TabsContent value="overview" className="space-y-8 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-6 sm:p-8 lg:p-10 bg-white dark:bg-gray-900/50 mt-6">
           {/* Progress Timeline */}
           <div className="relative">
             {/* Connection Line */}
@@ -323,14 +323,14 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                 const isCurrentPhase = currentPhase?.id === phase.id;
                 
                 return (
-                  <div key={phase.id} className="relative flex items-start gap-8">
+                  <div key={phase.id} className="relative flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
                     {/* Phase Node */}
                     <div className={`relative z-10 flex-shrink-0 transition-all duration-500 ${
                       isCurrentPhase ? 'scale-110' : 'hover:scale-105'
                     }`}>
                       <Card 
                         className={`
-                          w-96 
+                          w-full lg:w-96 
                           transition-all 
                           duration-300 
                           border-2
@@ -423,35 +423,39 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                     </div>
                     
                     {/* Action Button */}
-                    <div className="flex-1 flex items-center pl-4">
+                    <div className="flex-1 flex items-center lg:pl-4 w-full lg:w-auto mt-4 lg:mt-0">
                       {isCurrentPhase ? (
                         <Button
                           onClick={() => setActiveTab('content')}
-                          className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg px-6 py-3"
+                          className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base w-full sm:w-auto"
                         >
-                          <PlayCircle className="w-5 h-5 mr-2" />
-                          Continue Learning
+                          <PlayCircle className="w-4 h-4 mr-1 sm:w-5 sm:h-5 sm:mr-2" />
+                          <span className="hidden sm:inline">Continue Learning</span>
+                          <span className="sm:hidden">Continue</span>
                         </Button>
                       ) : unlockStatus.isUnlocked && !unlockStatus.isCompleted ? (
                         <Button
                           onClick={() => startPhase(phase)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg px-6 py-3"
+                          className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base w-full sm:w-auto"
                         >
-                          <ArrowRight className="w-5 h-5 mr-2" />
-                          Start Phase
+                          <ArrowRight className="w-4 h-4 mr-1 sm:w-5 sm:h-5 sm:mr-2" />
+                          <span className="hidden sm:inline">Start Phase</span>
+                          <span className="sm:hidden">Start</span>
                         </Button>
                       ) : !unlockStatus.isUnlocked ? (
-                        <div className="text-center p-4 border-2 border-amber-200 bg-amber-50 rounded-lg">
-                          <div className="flex items-center gap-2 text-sm text-amber-700">
-                            <AlertCircle className="w-5 h-5" />
-                            <span>Complete previous phases to unlock</span>
+                        <div className="text-center p-3 sm:p-4 border-2 border-amber-200 bg-amber-50 rounded-lg w-full sm:w-auto">
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-amber-700 justify-center">
+                            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Complete previous phases to unlock</span>
+                            <span className="sm:hidden">Unlock previous phases</span>
                           </div>
                         </div>
                       ) : (
-                        <div className="text-center p-4 border-2 border-green-200 bg-green-50 rounded-lg">
-                          <div className="text-sm text-green-700 font-medium flex items-center gap-2">
-                            <CheckCircle2 className="w-5 h-5" />
-                            Phase Completed
+                        <div className="text-center p-3 sm:p-4 border-2 border-green-200 bg-green-50 rounded-lg w-full sm:w-auto">
+                          <div className="text-xs sm:text-sm text-green-700 font-medium flex items-center gap-2 justify-center">
+                            <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                            <span className="hidden sm:inline">Phase Completed</span>
+                            <span className="sm:hidden">Completed</span>
                           </div>
                         </div>
                       )}
@@ -464,7 +468,7 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
         </TabsContent>
 
         {/* Progress Details Tab */}
-        <TabsContent value="progress" className="space-y-6 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-8 bg-white dark:bg-gray-900/50 mt-6">
+        <TabsContent value="progress" className="space-y-6 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-6 sm:p-8 lg:p-10 bg-white dark:bg-gray-900/50 mt-6">
         {/* Overall Progress Summary */}
         <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-300 dark:border-purple-600">
           <CardHeader className="pb-6">
@@ -577,20 +581,20 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
         </TabsContent>
 
         {/* Current Phase Tab */}
-        <TabsContent value="content" className="space-y-8 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-8 bg-white dark:bg-gray-900/50 mt-6">
+        <TabsContent value="content" className="space-y-8 border-2 border-gray-100 dark:border-gray-700 rounded-lg p-6 sm:p-8 xl:p-12 bg-white dark:bg-gray-900/50 mt-6">
           {currentPhase ? (
             <div className="space-y-6">
-              <div className="flex items-center justify-between p-6 border-2 border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <div className="flex flex-col xl:flex-row xl:items-center justify-between p-6 sm:p-8 xl:p-10 border-2 border-blue-200 rounded-lg bg-blue-50 dark:bg-blue-900/20 gap-4">
                 <div>
-                  <h3 className="text-2xl font-semibold flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center border-2 border-blue-300">
+                  <h3 className="text-xl sm:text-2xl xl:text-3xl font-semibold flex items-center gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center border-2 border-blue-300 flex-shrink-0">
                       {roadmap.phases.indexOf(currentPhase) + 1}
                     </div>
-                    {currentPhase.title}
+                    <span className="line-clamp-2">{currentPhase.title}</span>
                   </h3>
-                  <p className="text-muted-foreground mt-2">{currentPhase.description}</p>
+                  <p className="text-muted-foreground mt-2 text-base sm:text-lg xl:text-xl line-clamp-2">{currentPhase.description}</p>
                 </div>
-                <Badge variant="outline" className="text-sm px-4 py-2 border-2 border-blue-300">{currentPhase.estimated_duration}</Badge>
+                <Badge variant="outline" className="text-sm sm:text-base xl:text-lg px-4 py-2 sm:px-6 sm:py-3 xl:px-8 xl:py-4 border-2 border-blue-300 whitespace-nowrap flex-shrink-0">{currentPhase.estimated_duration}</Badge>
               </div>
 
               {/* Phase Content */}
@@ -598,24 +602,24 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                 {/* YouTube Videos */}
                 {currentPhase.youtube_videos.length > 0 && (
                   <div>
-                    <h4 className="text-xl font-medium mb-6 flex items-center gap-3 p-4 border-2 border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20">
-                      <Video className="w-6 h-6 text-red-500" />
-                      YouTube Videos ({currentPhase.youtube_videos.length})
+                    <h4 className="text-xl sm:text-2xl xl:text-3xl font-medium mb-6 flex items-center gap-3 p-4 sm:p-6 border-2 border-red-200 rounded-lg bg-red-50 dark:bg-red-900/20">
+                      <Video className="w-5 h-5 sm:w-6 sm:h-6 xl:w-8 xl:h-8 text-red-500 flex-shrink-0" />
+                      <span className="line-clamp-1">YouTube Videos ({currentPhase.youtube_videos.length})</span>
                     </h4>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {currentPhase.youtube_videos.map((video) => (
                         <Card key={video.id} className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 hover:border-blue-400" onClick={() => setSelectedVideo(video)}>
                           <CardHeader className="pb-4">
                             <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg">{video.title}</CardTitle>
+                              <CardTitle className="text-base sm:text-lg xl:text-xl line-clamp-2">{video.title}</CardTitle>
                               {isContentCompleted(currentPhase.id, 'video', video.id) && (
-                                <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-green-500 flex-shrink-0" />
                               )}
                             </div>
-                            <CardDescription className="mt-2">{video.description}</CardDescription>
+                            <CardDescription className="mt-2 text-sm sm:text-base xl:text-lg line-clamp-2">{video.description}</CardDescription>
                           </CardHeader>
                           <CardContent>
-                            <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4 border-2 border-gray-300 dark:border-gray-600 overflow-hidden">
+                            <div className="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-2 border-2 border-gray-300 dark:border-gray-600 overflow-hidden max-h-12 sm:max-h-14 md:max-h-16 lg:max-h-18 xl:max-h-20">
                               <img 
                                 src={video.thumbnail_url || `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`}
                                 alt={video.title}
@@ -623,11 +627,11 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                               />
                             </div>
                             <div className="flex items-center justify-between">
-                              <Badge variant="outline" className="flex items-center gap-2">
-                                <Clock className="w-4 h-4" />
+                              <Badge variant="outline" className="flex items-center gap-2 text-sm sm:text-base">
+                                <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                                 {video.duration}
                               </Badge>
-                              <PlayCircle className="w-6 h-6 text-blue-500" />
+                              <PlayCircle className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-blue-500 flex-shrink-0" />
                             </div>
                           </CardContent>
                         </Card>
@@ -639,36 +643,36 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                 {/* Coursera Courses */}
                 {currentPhase.coursera_links.length > 0 && (
                   <div>
-                    <h4 className="text-xl font-medium mb-6 flex items-center gap-3 p-4 border-2 border-purple-200 rounded-lg bg-purple-50 dark:bg-purple-900/20">
-                      <BookOpen className="w-6 h-6 text-purple-500" />
-                      Coursera Courses ({currentPhase.coursera_links.length})
+                    <h4 className="text-xl sm:text-2xl xl:text-3xl font-medium mb-6 flex items-center gap-3 p-4 sm:p-6 border-2 border-purple-200 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+                      <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 xl:w-8 xl:h-8 text-purple-500 flex-shrink-0" />
+                      <span className="line-clamp-1">Coursera Courses ({currentPhase.coursera_links.length})</span>
                     </h4>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {currentPhase.coursera_links.map((course) => (
                         <Card key={course.id} className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 hover:border-purple-400" onClick={() => setSelectedCourse(course)}>
                           <CardHeader className="pb-4">
                             <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg">{course.title}</CardTitle>
+                              <CardTitle className="text-base sm:text-lg xl:text-xl line-clamp-2">{course.title}</CardTitle>
                               {isContentCompleted(currentPhase.id, 'course', course.id) && (
-                                <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-green-500 flex-shrink-0" />
                               )}
                             </div>
-                            <CardDescription className="mt-2">{course.description}</CardDescription>
+                            <CardDescription className="mt-2 text-sm sm:text-base xl:text-lg line-clamp-2">{course.description}</CardDescription>
                           </CardHeader>
                           <CardContent>
-                            <div className="space-y-4">
-                              <div className="flex items-center gap-3">
-                                <Badge className={getDifficultyColor(course.difficulty)}>
+                            <div className="space-y-3 sm:space-y-4">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <Badge className={`${getDifficultyColor(course.difficulty)} text-sm sm:text-base`}>
                                   {course.difficulty}
                                 </Badge>
-                                <Badge variant="outline" className="flex items-center gap-2">
-                                  <Clock className="w-4 h-4" />
+                                <Badge variant="outline" className="flex items-center gap-2 text-sm sm:text-base">
+                                  <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                                   {course.duration}
                                 </Badge>
                               </div>
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">{course.provider}</span>
-                                <ExternalLink className="w-6 h-6 text-purple-500" />
+                                <span className="text-sm sm:text-base text-muted-foreground">{course.provider}</span>
+                                <ExternalLink className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-purple-500 flex-shrink-0" />
                               </div>
                             </div>
                           </CardContent>
@@ -681,36 +685,36 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                 {/* IDE Projects */}
                 {currentPhase.ide_projects.length > 0 && (
                   <div>
-                    <h4 className="text-xl font-medium mb-6 flex items-center gap-3 p-4 border-2 border-green-200 rounded-lg bg-green-50 dark:bg-green-900/20">
-                      <Laptop className="w-6 h-6 text-green-500" />
-                      Hands-on Projects ({currentPhase.ide_projects.length})
+                    <h4 className="text-xl sm:text-2xl xl:text-3xl font-medium mb-6 flex items-center gap-3 p-4 sm:p-6 border-2 border-green-200 rounded-lg bg-green-50 dark:bg-green-900/20">
+                      <Laptop className="w-5 h-5 sm:w-6 sm:h-6 xl:w-8 xl:h-8 text-green-500 flex-shrink-0" />
+                      <span className="line-clamp-1">Hands-on Projects ({currentPhase.ide_projects.length})</span>
                     </h4>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {currentPhase.ide_projects.map((project) => (
                         <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 hover:border-green-400" onClick={() => setSelectedProject(project)}>
                           <CardHeader className="pb-4">
                             <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg">{project.title}</CardTitle>
+                              <CardTitle className="text-base sm:text-lg xl:text-xl line-clamp-2">{project.title}</CardTitle>
                               {isContentCompleted(currentPhase.id, 'project', project.id) && (
-                                <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-green-500 flex-shrink-0" />
                               )}
                             </div>
-                            <CardDescription className="mt-2">{project.description}</CardDescription>
+                            <CardDescription className="mt-2 text-sm sm:text-base xl:text-lg line-clamp-2">{project.description}</CardDescription>
                           </CardHeader>
                           <CardContent>
-                            <div className="space-y-4">
-                              <div className="flex items-center gap-3">
-                                <Badge className={getDifficultyColor(project.difficulty)}>
+                            <div className="space-y-3 sm:space-y-4">
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <Badge className={`${getDifficultyColor(project.difficulty)} text-sm sm:text-base`}>
                                   {project.difficulty}
                                 </Badge>
-                                <Badge variant="outline" className="flex items-center gap-2">
-                                  <Code className="w-4 h-4" />
+                                <Badge variant="outline" className="flex items-center gap-2 text-sm sm:text-base">
+                                  <Code className="w-4 h-4 sm:w-5 sm:h-5" />
                                   {project.language}
                                 </Badge>
                               </div>
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">Interactive coding project</span>
-                                <Laptop className="w-6 h-6 text-green-500" />
+                                <span className="text-sm sm:text-base text-muted-foreground">Interactive coding project</span>
+                                <Laptop className="w-5 h-5 sm:w-6 sm:h-6 xl:w-7 xl:h-7 text-green-500 flex-shrink-0" />
                               </div>
                             </div>
                           </CardContent>

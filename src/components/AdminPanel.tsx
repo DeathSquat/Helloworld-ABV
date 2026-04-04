@@ -157,7 +157,21 @@ const AdminPanel: React.FC = () => {
         title: newRoadmap.title,
         description: newRoadmap.description,
         phases: newRoadmap.phases,
-        is_active: true
+        category: 'Web Development', // Default category
+        difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced', // Default difficulty
+        estimated_duration: '4 weeks', // Default duration
+        prerequisites: [], // Empty prerequisites array
+        learning_objectives: [], // Empty learning objectives array
+        target_audience: ['Students'], // Default target audience
+        tags: [], // Empty tags array
+        thumbnail_url: null, // No thumbnail by default
+        instructor_name: null, // No instructor name by default
+        instructor_bio: null, // No instructor bio by default
+        language: 'English', // Default language
+        rating: 0, // Default rating
+        enrollment_count: 0, // Default enrollment count
+        completion_rate: 0, // Default completion rate
+        is_active: true // Set roadmap as active
       };
       await createRoadmap(roadmapData);
       setNewRoadmap({ title: '', description: '', phases: [] });
@@ -317,12 +331,25 @@ const AdminPanel: React.FC = () => {
       const courseData = {
         title: newCourse.title,
         description: newCourse.description,
-        duration: newCourse.duration,
-        difficulty: newCourse.difficulty,
-        provider: newCourse.provider,
+        category: 'Programming', // Default category
+        difficulty_level: newCourse.difficulty,
+        estimated_duration: newCourse.duration,
+        prerequisites: newCourse.prerequisites ? newCourse.prerequisites.split(',').map(p => p.trim()) : [],
+        learning_objectives: newCourse.topics ? newCourse.topics.split(',').map(t => t.trim()) : [],
+        target_audience: ['Students'], // Default target audience
+        tags: [], // Empty tags array
+        thumbnail_url: null, // No thumbnail by default
+        instructor_name: newCourse.provider || null,
+        instructor_bio: null, // No instructor bio by default
+        language: 'English', // Default language
+        rating: 0, // Default rating
+        enrollment_count: 0, // Default enrollment count
+        completion_rate: 0, // Default completion rate
+        modules: [], // Empty modules array
+        documents: [], // Empty documents array
+        youtubeLinks: [], // Empty YouTube links array
         url: newCourse.url,
-        topics: newCourse.topics,
-        prerequisites: newCourse.prerequisites
+        is_active: true // Set course as active
       };
       await createCourse(courseData);
       setNewCourse({ 

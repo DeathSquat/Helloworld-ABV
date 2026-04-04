@@ -55,7 +55,19 @@ const AdminDashboard = () => {
   const [newRoadmap, setNewRoadmap] = useState({ 
     title: '', 
     description: '', 
-    phases: [] as any[]
+    phases: [] as any[],
+    // Enhanced specifications
+    category: '',
+    difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced',
+    estimated_duration: '',
+    prerequisites: [] as string[],
+    learning_objectives: [] as string[],
+    target_audience: [] as string[],
+    tags: [] as string[],
+    thumbnail_url: '',
+    instructor_name: '',
+    instructor_bio: '',
+    language: 'English'
   });
   const [newPhase, setNewPhase] = useState({ 
     title: '', 
@@ -68,7 +80,25 @@ const AdminDashboard = () => {
   const [newVideo, setNewVideo] = useState({ title: '', video_id: '', description: '', duration: '', thumbnail_url: '' });
   const [newCoursera, setNewCoursera] = useState({ title: '', url: '', description: '', provider: '', duration: '', difficulty: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced' });
   const [newIDEProject, setNewIDEProject] = useState({ title: '', description: '', language: '', difficulty: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced', starter_code: '', solution_code: '', instructions: '' });
-  const [newCourse, setNewCourse] = useState({ title: '', description: '', duration: '', difficulty: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced' });
+  const [newCourse, setNewCourse] = useState({ 
+    title: '', 
+    description: '', 
+    // Enhanced specifications
+    category: '',
+    difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced',
+    estimated_duration: '',
+    prerequisites: [] as string[],
+    learning_objectives: [] as string[],
+    target_audience: [] as string[],
+    tags: [] as string[],
+    thumbnail_url: '',
+    instructor_name: '',
+    instructor_bio: '',
+    language: 'English',
+    modules: [] as any[],
+    documents: [] as string[],
+    youtubeLinks: [] as string[]
+  });
 
   // Check if user is admin
   if (userProfile && userProfile.role !== 'admin') {
@@ -143,12 +173,40 @@ const AdminDashboard = () => {
         title: newRoadmap.title,
         description: newRoadmap.description,
         phases: newRoadmap.phases,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
+        is_active: true,
+        // Enhanced specifications
+        category: newRoadmap.category || 'General',
+        difficulty_level: newRoadmap.difficulty_level,
+        estimated_duration: newRoadmap.estimated_duration || 'Not specified',
+        prerequisites: newRoadmap.prerequisites,
+        learning_objectives: newRoadmap.learning_objectives,
+        target_audience: newRoadmap.target_audience,
+        tags: newRoadmap.tags,
+        thumbnail_url: newRoadmap.thumbnail_url || undefined,
+        instructor_name: newRoadmap.instructor_name || undefined,
+        instructor_bio: newRoadmap.instructor_bio || undefined,
+        language: newRoadmap.language,
+        rating: 0,
+        enrollment_count: 0,
+        completion_rate: 0
       };
       await createRoadmap(roadmapData);
-      setNewRoadmap({ title: '', description: '', phases: [] });
+      setNewRoadmap({ 
+        title: '', 
+        description: '', 
+        phases: [],
+        category: '',
+        difficulty_level: 'Beginner',
+        estimated_duration: '',
+        prerequisites: [],
+        learning_objectives: [],
+        target_audience: [],
+        tags: [],
+        thumbnail_url: '',
+        instructor_name: '',
+        instructor_bio: '',
+        language: 'English'
+      });
       setNewPhase({ 
         title: '', 
         description: '', 
@@ -275,13 +333,45 @@ const AdminDashboard = () => {
       const courseData = {
         title: newCourse.title,
         description: newCourse.description,
-        duration: newCourse.duration,
-        difficulty: newCourse.difficulty,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        is_active: true,
+        // Enhanced specifications
+        category: newCourse.category || 'General',
+        difficulty_level: newCourse.difficulty_level,
+        estimated_duration: newCourse.estimated_duration || 'Not specified',
+        prerequisites: newCourse.prerequisites,
+        learning_objectives: newCourse.learning_objectives,
+        target_audience: newCourse.target_audience,
+        tags: newCourse.tags,
+        thumbnail_url: newCourse.thumbnail_url || null,
+        instructor_name: newCourse.instructor_name || null,
+        instructor_bio: newCourse.instructor_bio || null,
+        language: newCourse.language,
+        rating: 0,
+        enrollment_count: 0,
+        completion_rate: 0,
+        modules: newCourse.modules || [],
+        documents: newCourse.documents || [],
+        youtubeLinks: newCourse.youtubeLinks || []
       };
       await createCourse(courseData);
-      setNewCourse({ title: '', description: '', duration: '', difficulty: 'Beginner' });
+      setNewCourse({ 
+        title: '', 
+        description: '', 
+        category: '',
+        difficulty_level: 'Beginner',
+        estimated_duration: '',
+        prerequisites: [],
+        learning_objectives: [],
+        target_audience: [],
+        tags: [],
+        thumbnail_url: '',
+        instructor_name: '',
+        instructor_bio: '',
+        language: 'English',
+        modules: [],
+        documents: [],
+        youtubeLinks: []
+      });
       setIsCreateCourseOpen(false);
       await loadData(); // Reload data to show new course
     } catch (error) {
@@ -1097,8 +1187,8 @@ const AdminDashboard = () => {
                           <Label htmlFor="course-duration" className="text-foreground">Duration</Label>
                           <Input
                             id="course-duration"
-                            value={newCourse.duration}
-                            onChange={(e) => setNewCourse({ ...newCourse, duration: e.target.value })}
+                            value={newCourse.estimated_duration}
+                            onChange={(e) => setNewCourse({ ...newCourse, estimated_duration: e.target.value })}
                             placeholder="e.g., 4 weeks"
                             className="bg-accent/50 border-border text-foreground placeholder-muted-foreground"
                           />
@@ -1106,9 +1196,9 @@ const AdminDashboard = () => {
                         <div>
                           <Label htmlFor="course-difficulty" className="text-foreground">Difficulty</Label>
                           <Select
-                            value={newCourse.difficulty}
+                            value={newCourse.difficulty_level}
                             onValueChange={(value: 'Beginner' | 'Intermediate' | 'Advanced') => 
-                              setNewCourse({ ...newCourse, difficulty: value })
+                              setNewCourse({ ...newCourse, difficulty_level: value })
                             }
                           >
                             <SelectTrigger className="w-40 bg-accent/50 border-border text-foreground">
@@ -1174,13 +1264,13 @@ const AdminDashboard = () => {
                             <div className="flex items-center gap-4 text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm">⏱</span>
-                                <span>{course.duration}</span>
+                                <span>{course.estimated_duration}</span>
                               </div>
                               <Badge 
-                                variant={course.difficulty === 'Beginner' ? 'secondary' : course.difficulty === 'Intermediate' ? 'default' : 'destructive'}
+                                variant={course.difficulty_level === 'Beginner' ? 'secondary' : course.difficulty_level === 'Intermediate' ? 'default' : 'destructive'}
                                 className="ml-2"
                               >
-                                {course.difficulty}
+                                {course.difficulty_level}
                               </Badge>
                             </div>
                           </div>
