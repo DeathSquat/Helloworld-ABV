@@ -1,0 +1,116 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Users collection - only essential user details
+    match /users/{userId} {
+      // Users can read their own profile, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Users can create their own profile during signup
+      allow create: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.data.keys().hasAll(['user_id', 'email', 'role', 'joined_at']);
+      
+      // Users can update their own profile (except critical fields), admins can update all
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // Progress collection - detailed progress tracking
+    match /progress/{userId} {
+      // Users can read their own progress, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Allow creation during signup
+      allow create: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.data.keys().hasAll(['user_id', 'created_at', 'updated_at']);
+      
+      // Users can update their own progress, admins can update all
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // Scores collection
+    match /scores/{userId} {
+      // Users can read their own scores, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Allow creation during signup
+      allow create: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.data.keys().hasAll(['user_id', 'created_at', 'updated_at']);
+      
+      // Users can update their own scores, admins can update all
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // Achievements collection
+    match /achievements/{userId}/{documentId} {
+      // Users can read their own achievements, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Users can create their own achievements, admins can create all
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      
+      // Users can update their own achievements, admins can update all
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // Recent events collection
+    match /recent/{userId}/{documentId} {
+      // Users can read their own recent events, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Users can create their own events, admins can create all
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      
+      // Users can update their own events, admins can update all
+      allow write: if isOwner(userId) || isAdmin();
+    }
+    
+    // Roadmaps collection - admins write, all authenticated users read
+    match /roadmaps/{roadmapId} {
+      allow read: if isAuthenticated();
+      allow write, create, delete: if isAdmin();
+    }
+    
+    // User roadmap progress tracking
+    match /user_roadmap_progress/{userIdRoadmapId} {
+      allow read, write, create: if isOwner(userIdRoadmapId.split('_')[0]) || isAdmin();
+    }
+    
+    // User phase progress tracking  
+    match /user_phase_progress/{userIdRoadmapIdPhaseId} {
+      allow read, write, create: if isOwner(userIdRoadmapIdPhaseId.split('_')[0]) || isAdmin();
+    }
+    
+    // Courses collection - admins write, all authenticated users read
+    match /courses/{courseId} {
+      allow read: if isAuthenticated();
+      allow write, create, delete: if isAdmin();
+    }
+    
+    // User course progress tracking
+    match /user_course_progress/{userIdCourseId} {
+      allow read, write, create: if isOwner(userIdCourseId.split('_')[0]) || isAdmin();
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
