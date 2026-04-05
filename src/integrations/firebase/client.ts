@@ -903,13 +903,16 @@ export const getPhaseUnlockStatus = async (userId: string, roadmapId: string, ph
   const isCompleted = completedPhases.includes(phaseId);
   const isInProgress = roadmapProgress?.current_phase === phaseId;
   
-  // Check if prerequisites are met
-  const prerequisitesMet = !phase.prerequisites || 
-    phase.prerequisites.every(prereq => completedPhases.includes(prereq));
-  
+  // Enforce sequential phase completion
   // First phase is always unlocked
   const isFirstPhase = phase.order === 0;
-  const isUnlocked = isFirstPhase || prerequisitesMet;
+  
+  // For subsequent phases, check if the previous phase is completed
+  const previousPhase = roadmap.phases.find(p => p.order === phase.order - 1);
+  const previousPhaseCompleted = previousPhase ? completedPhases.includes(previousPhase.id) : true;
+  
+  // Phase is unlocked if it's the first phase OR the previous phase is completed
+  const isUnlocked = isFirstPhase || previousPhaseCompleted;
   
   return { isUnlocked, isCompleted, isInProgress };
 };

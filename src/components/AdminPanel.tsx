@@ -43,7 +43,9 @@ import {
   Trophy,
   Award,
   Target,
-  TrendingUp
+  TrendingUp,
+  Video,
+  Laptop
 } from 'lucide-react';
 
 
@@ -61,7 +63,21 @@ const AdminPanel: React.FC = () => {
   const [newRoadmap, setNewRoadmap] = useState({ 
     title: '', 
     description: '', 
-    phases: [] as any[]
+    phases: [] as any[],
+    category: '',
+    difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced',
+    estimated_duration: '',
+    prerequisites: [] as string[],
+    learning_objectives: [] as string[],
+    target_audience: [] as string[],
+    tags: [] as string[],
+    thumbnail_url: null as string | null,
+    instructor_name: null as string | null,
+    instructor_bio: null as string | null,
+    language: '',
+    rating: 0,
+    enrollment_count: 0,
+    completion_rate: 0
   });
   const [editingRoadmap, setEditingRoadmap] = useState<Roadmap | null>(null);
   const [newPhase, setNewPhase] = useState({ 
@@ -85,6 +101,10 @@ const AdminPanel: React.FC = () => {
   topics: '',
   prerequisites: ''
 });
+  const [editingPhase, setEditingPhase] = useState<any>(null);
+  const [editingVideo, setEditingVideo] = useState<any>(null);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
+  const [editingProject, setEditingProject] = useState<any>(null);
 
   // Check if user is admin
   if (!userProfile || userProfile.role !== 'admin') {
@@ -157,24 +177,42 @@ const AdminPanel: React.FC = () => {
         title: newRoadmap.title,
         description: newRoadmap.description,
         phases: newRoadmap.phases,
-        category: 'Web Development', // Default category
-        difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced', // Default difficulty
-        estimated_duration: '4 weeks', // Default duration
-        prerequisites: [], // Empty prerequisites array
-        learning_objectives: [], // Empty learning objectives array
-        target_audience: ['Students'], // Default target audience
-        tags: [], // Empty tags array
-        thumbnail_url: null, // No thumbnail by default
-        instructor_name: null, // No instructor name by default
-        instructor_bio: null, // No instructor bio by default
-        language: 'English', // Default language
-        rating: 0, // Default rating
-        enrollment_count: 0, // Default enrollment count
-        completion_rate: 0, // Default completion rate
+        category: newRoadmap.category || 'Web Development',
+        difficulty_level: newRoadmap.difficulty_level,
+        estimated_duration: newRoadmap.estimated_duration || '4 weeks',
+        prerequisites: newRoadmap.prerequisites,
+        learning_objectives: newRoadmap.learning_objectives,
+        target_audience: newRoadmap.target_audience,
+        tags: newRoadmap.tags,
+        thumbnail_url: newRoadmap.thumbnail_url,
+        instructor_name: newRoadmap.instructor_name,
+        instructor_bio: newRoadmap.instructor_bio,
+        language: newRoadmap.language || 'English',
+        rating: newRoadmap.rating,
+        enrollment_count: newRoadmap.enrollment_count,
+        completion_rate: newRoadmap.completion_rate,
         is_active: true // Set roadmap as active
       };
       await createRoadmap(roadmapData);
-      setNewRoadmap({ title: '', description: '', phases: [] });
+      setNewRoadmap({ 
+        title: '', 
+        description: '', 
+        phases: [],
+        category: '',
+        difficulty_level: 'Beginner' as 'Beginner' | 'Intermediate' | 'Advanced',
+        estimated_duration: '',
+        prerequisites: [] as string[],
+        learning_objectives: [] as string[],
+        target_audience: [] as string[],
+        tags: [] as string[],
+        thumbnail_url: null as string | null,
+        instructor_name: null as string | null,
+        instructor_bio: null as string | null,
+        language: '',
+        rating: 0,
+        enrollment_count: 0,
+        completion_rate: 0
+      });
       setIsCreateRoadmapOpen(false);
       await loadData();
     } catch (error) {
@@ -189,6 +227,20 @@ const AdminPanel: React.FC = () => {
         title: editingRoadmap.title,
         description: editingRoadmap.description,
         phases: editingRoadmap.phases,
+        category: editingRoadmap.category,
+        difficulty_level: editingRoadmap.difficulty_level,
+        estimated_duration: editingRoadmap.estimated_duration,
+        prerequisites: editingRoadmap.prerequisites,
+        learning_objectives: editingRoadmap.learning_objectives,
+        target_audience: editingRoadmap.target_audience,
+        tags: editingRoadmap.tags,
+        thumbnail_url: editingRoadmap.thumbnail_url,
+        instructor_name: editingRoadmap.instructor_name,
+        instructor_bio: editingRoadmap.instructor_bio,
+        language: editingRoadmap.language,
+        rating: editingRoadmap.rating,
+        enrollment_count: editingRoadmap.enrollment_count,
+        completion_rate: editingRoadmap.completion_rate,
         is_active: editingRoadmap.is_active
       });
       setEditingRoadmap(null);
@@ -324,6 +376,85 @@ const AdminPanel: React.FC = () => {
       ide_projects: [...newPhase.ide_projects, project]
     });
     setNewIDEProject({ title: '', description: '', language: '', difficulty: 'Beginner', starter_code: '', solution_code: '', instructions: '' });
+  };
+
+  // Edit functions for individual resources
+  const editVideoInPhase = (phaseIndex: number, videoIndex: number, video: YouTubeVideo) => {
+    setEditingVideo({ ...video, phaseIndex, videoIndex });
+  };
+
+  const editCourseInPhase = (phaseIndex: number, courseIndex: number, course: CourseraLink) => {
+    setEditingCourse({ ...course, phaseIndex, courseIndex });
+  };
+
+  const editProjectInPhase = (phaseIndex: number, projectIndex: number, project: IDEProject) => {
+    setEditingProject({ ...project, phaseIndex, projectIndex });
+  };
+
+  const updateVideoInPhase = () => {
+    if (!editingVideo) return;
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[editingVideo.phaseIndex].youtube_videos[editingVideo.videoIndex] = {
+      ...editingVideo,
+      title: editingVideo.title,
+      video_id: editingVideo.video_id,
+      description: editingVideo.description,
+      duration: editingVideo.duration,
+      thumbnail_url: editingVideo.thumbnail_url
+    };
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
+    setEditingVideo(null);
+  };
+
+  const updateCourseInPhase = () => {
+    if (!editingCourse) return;
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[editingCourse.phaseIndex].coursera_links[editingCourse.courseIndex] = {
+      ...editingCourse,
+      title: editingCourse.title,
+      url: editingCourse.url,
+      description: editingCourse.description,
+      provider: editingCourse.provider,
+      duration: editingCourse.duration,
+      difficulty: editingCourse.difficulty
+    };
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
+    setEditingCourse(null);
+  };
+
+  const updateProjectInPhase = () => {
+    if (!editingProject) return;
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[editingProject.phaseIndex].ide_projects[editingProject.projectIndex] = {
+      ...editingProject,
+      title: editingProject.title,
+      description: editingProject.description,
+      language: editingProject.language,
+      difficulty: editingProject.difficulty,
+      starter_code: editingProject.starter_code,
+      solution_code: editingProject.solution_code,
+      instructions: editingProject.instructions
+    };
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
+    setEditingProject(null);
+  };
+
+  const deleteVideoFromPhase = (phaseIndex: number, videoIndex: number) => {
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[phaseIndex].youtube_videos.splice(videoIndex, 1);
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
+  };
+
+  const deleteCourseFromPhase = (phaseIndex: number, courseIndex: number) => {
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[phaseIndex].coursera_links.splice(courseIndex, 1);
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
+  };
+
+  const deleteProjectFromPhase = (phaseIndex: number, projectIndex: number) => {
+    const updatedPhases = [...editingRoadmap!.phases];
+    updatedPhases[phaseIndex].ide_projects.splice(projectIndex, 1);
+    setEditingRoadmap({ ...editingRoadmap!, phases: updatedPhases });
   };
 
   const handleCreateCourse = async () => {
@@ -791,6 +922,80 @@ const AdminPanel: React.FC = () => {
                               rows={4}
                             />
                           </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="roadmap-category" className="text-amber-700 dark:text-amber-300">Category</Label>
+                              <Input
+                                id="roadmap-category"
+                                value={newRoadmap.category || ''}
+                                onChange={(e) => setNewRoadmap({ ...newRoadmap, category: e.target.value })}
+                                placeholder="e.g., Web Development"
+                                className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="roadmap-difficulty" className="text-amber-700 dark:text-amber-300">Difficulty Level</Label>
+                              <Select
+                                value={newRoadmap.difficulty_level || 'Beginner'}
+                                onValueChange={(value: 'Beginner' | 'Intermediate' | 'Advanced') => {
+                                  setNewRoadmap({ ...newRoadmap, difficulty_level: value });
+                                }}
+                              >
+                                <SelectTrigger className="w-full bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200">
+                                  <SelectValue placeholder="Select difficulty" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-amber-50 dark:bg-amber-900 border-amber-300 dark:border-amber-600">
+                                  <SelectItem value="Beginner" className="text-amber-800 dark:text-amber-200">Beginner</SelectItem>
+                                  <SelectItem value="Intermediate" className="text-amber-800 dark:text-amber-200">Intermediate</SelectItem>
+                                  <SelectItem value="Advanced" className="text-amber-800 dark:text-amber-200">Advanced</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="roadmap-duration" className="text-amber-700 dark:text-amber-300">Estimated Duration</Label>
+                              <Input
+                                id="roadmap-duration"
+                                value={newRoadmap.estimated_duration || ''}
+                                onChange={(e) => setNewRoadmap({ ...newRoadmap, estimated_duration: e.target.value })}
+                                placeholder="e.g., 4 weeks, 2 months"
+                                className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="roadmap-language" className="text-amber-700 dark:text-amber-300">Language</Label>
+                              <Input
+                                id="roadmap-language"
+                                value={newRoadmap.language || ''}
+                                onChange={(e) => setNewRoadmap({ ...newRoadmap, language: e.target.value })}
+                                placeholder="e.g., English"
+                                className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="roadmap-instructor" className="text-amber-700 dark:text-amber-300">Instructor Name</Label>
+                              <Input
+                                id="roadmap-instructor"
+                                value={newRoadmap.instructor_name || ''}
+                                onChange={(e) => setNewRoadmap({ ...newRoadmap, instructor_name: e.target.value })}
+                                placeholder="Instructor name (optional)"
+                                className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="roadmap-thumbnail" className="text-amber-700 dark:text-amber-300">Thumbnail URL</Label>
+                              <Input
+                                id="roadmap-thumbnail"
+                                value={newRoadmap.thumbnail_url || ''}
+                                onChange={(e) => setNewRoadmap({ ...newRoadmap, thumbnail_url: e.target.value })}
+                                placeholder="Thumbnail image URL (optional)"
+                                className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                              />
+                            </div>
+                          </div>
                         </div>
 
                         {/* Phases Section */}
@@ -1215,43 +1420,342 @@ const AdminPanel: React.FC = () => {
                         rows={4}
                       />
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="edit-roadmap-category" className="text-amber-700 dark:text-amber-300">Category</Label>
+                        <Input
+                          id="edit-roadmap-category"
+                          value={editingRoadmap.category || ''}
+                          onChange={(e) => setEditingRoadmap({ ...editingRoadmap, category: e.target.value })}
+                          placeholder="e.g., Web Development"
+                          className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-roadmap-difficulty" className="text-amber-700 dark:text-amber-300">Difficulty Level</Label>
+                        <Select
+                          value={editingRoadmap.difficulty_level || 'Beginner'}
+                          onValueChange={(value: 'Beginner' | 'Intermediate' | 'Advanced') => {
+                            setEditingRoadmap({ ...editingRoadmap, difficulty_level: value });
+                          }}
+                        >
+                          <SelectTrigger className="w-full bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200">
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-amber-50 dark:bg-amber-900 border-amber-300 dark:border-amber-600">
+                            <SelectItem value="Beginner" className="text-amber-800 dark:text-amber-200">Beginner</SelectItem>
+                            <SelectItem value="Intermediate" className="text-amber-800 dark:text-amber-200">Intermediate</SelectItem>
+                            <SelectItem value="Advanced" className="text-amber-800 dark:text-amber-200">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="edit-roadmap-duration" className="text-amber-700 dark:text-amber-300">Estimated Duration</Label>
+                        <Input
+                          id="edit-roadmap-duration"
+                          value={editingRoadmap.estimated_duration || ''}
+                          onChange={(e) => setEditingRoadmap({ ...editingRoadmap, estimated_duration: e.target.value })}
+                          placeholder="e.g., 4 weeks, 2 months"
+                          className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-roadmap-language" className="text-amber-700 dark:text-amber-300">Language</Label>
+                        <Input
+                          id="edit-roadmap-language"
+                          value={editingRoadmap.language || ''}
+                          onChange={(e) => setEditingRoadmap({ ...editingRoadmap, language: e.target.value })}
+                          placeholder="e.g., English"
+                          className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="edit-roadmap-instructor" className="text-amber-700 dark:text-amber-300">Instructor Name</Label>
+                        <Input
+                          id="edit-roadmap-instructor"
+                          value={editingRoadmap.instructor_name || ''}
+                          onChange={(e) => setEditingRoadmap({ ...editingRoadmap, instructor_name: e.target.value })}
+                          placeholder="Instructor name (optional)"
+                          className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="edit-roadmap-thumbnail" className="text-amber-700 dark:text-amber-300">Thumbnail URL</Label>
+                        <Input
+                          id="edit-roadmap-thumbnail"
+                          value={editingRoadmap.thumbnail_url || ''}
+                          onChange={(e) => setEditingRoadmap({ ...editingRoadmap, thumbnail_url: e.target.value })}
+                          placeholder="Thumbnail image URL (optional)"
+                          className="bg-amber-100 dark:bg-amber-800/50 border-amber-300 dark:border-amber-600 text-amber-800 dark:text-amber-200"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Phases List */}
+                  {/* Phases List with Resource Management */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-200">Learning Phases</h3>
+                    <h3 className="text-lg font-semibold text-amber-800 dark:text-amber-200">Learning Phases & Resources</h3>
                     
                     {editingRoadmap.phases.length === 0 ? (
                       <p className="text-sm text-amber-600 dark:text-amber-400">No phases added</p>
                     ) : (
-                      <div className="space-y-3">
-                        {editingRoadmap.phases.map((phase, index) => (
-                          <div key={phase.id} className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
+                      <div className="space-y-6">
+                        {editingRoadmap.phases.map((phase, phaseIndex) => (
+                          <div key={phase.id} className="border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+                            <div className="flex items-center justify-between mb-4">
                               <h5 className="font-medium text-blue-800 dark:text-blue-200">
-                                Phase {index + 1}: {phase.title}
+                                Phase {phaseIndex + 1}: {phase.title}
                               </h5>
-                              <Badge variant="outline" className="text-xs">
-                                {phase.estimated_duration}
-                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {phase.estimated_duration}
+                                </Badge>
+                                <Input
+                                  value={phase.title}
+                                  onChange={(e) => {
+                                    const updatedPhases = [...editingRoadmap.phases];
+                                    updatedPhases[phaseIndex].title = e.target.value;
+                                    setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                  }}
+                                  className="w-48 h-8 text-sm bg-blue-100 dark:bg-blue-800/50 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200"
+                                  placeholder="Phase title"
+                                />
+                              </div>
                             </div>
-                            <p className="text-sm text-blue-600 dark:text-blue-400 mb-2">{phase.description}</p>
-                            <div className="flex flex-wrap gap-2">
-                              {phase.youtube_videos.length > 0 && (
-                                <Badge variant="secondary" className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-800/50 dark:text-red-300 text-xs">
-                                  📹 {phase.youtube_videos.length} Videos
-                                </Badge>
-                              )}
-                              {phase.coursera_links.length > 0 && (
-                                <Badge variant="secondary" className="px-2 py-1 bg-purple-100 text-purple-700 dark:bg-purple-800/50 dark:text-purple-300 text-xs">
-                                  🎓 {phase.coursera_links.length} Courses
-                                </Badge>
-                              )}
-                              {phase.ide_projects.length > 0 && (
-                                <Badge variant="secondary" className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-800/50 dark:text-green-300 text-xs">
-                                  💻 {phase.ide_projects.length} Projects
-                                </Badge>
-                              )}
+                            
+                            <Textarea
+                              value={phase.description}
+                              onChange={(e) => {
+                                const updatedPhases = [...editingRoadmap.phases];
+                                updatedPhases[phaseIndex].description = e.target.value;
+                                setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                              }}
+                              className="w-full mb-4 bg-blue-100 dark:bg-blue-800/50 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200"
+                              rows={2}
+                              placeholder="Phase description..."
+                            />
+
+                            {/* YouTube Videos Section */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <h6 className="font-medium text-red-700 dark:text-red-300 flex items-center gap-2">
+                                  <Video className="w-4 h-4" />
+                                  YouTube Videos ({phase.youtube_videos.length})
+                                </h6>
+                                <Button
+                                  onClick={() => {
+                                    const newVideo: YouTubeVideo = {
+                                      id: Date.now().toString(),
+                                      title: 'New Video',
+                                      video_id: '',
+                                      description: 'Video description',
+                                      duration: 'Auto',
+                                      thumbnail_url: '',
+                                      order: phase.youtube_videos.length
+                                    };
+                                    const updatedPhases = [...editingRoadmap.phases];
+                                    updatedPhases[phaseIndex].youtube_videos.push(newVideo);
+                                    setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                  }}
+                                  size="sm"
+                                  className="bg-red-500 hover:bg-red-600 text-white"
+                                >
+                                  <Plus className="w-3 h-3 mr-1" />
+                                  Add Video
+                                </Button>
+                              </div>
+                              <div className="space-y-2">
+                                {phase.youtube_videos.map((video, videoIndex) => (
+                                  <div key={video.id} className="flex gap-2 items-center p-2 bg-red-50 dark:bg-red-900/20 rounded">
+                                    <Input
+                                      value={video.title}
+                                      onChange={(e) => {
+                                        const updatedPhases = [...editingRoadmap.phases];
+                                        updatedPhases[phaseIndex].youtube_videos[videoIndex].title = e.target.value;
+                                        setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                      }}
+                                      className="flex-1 bg-red-100 dark:bg-red-800/50 border-red-300 dark:border-red-600 text-red-800 dark:text-red-200 text-sm"
+                                      placeholder="Video title"
+                                    />
+                                    <Input
+                                      value={video.video_id}
+                                      onChange={(e) => {
+                                        const updatedPhases = [...editingRoadmap.phases];
+                                        updatedPhases[phaseIndex].youtube_videos[videoIndex].video_id = e.target.value;
+                                        setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                      }}
+                                      className="w-32 bg-red-100 dark:bg-red-800/50 border-red-300 dark:border-red-600 text-red-800 dark:text-red-200 text-sm"
+                                      placeholder="Video ID"
+                                    />
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => deleteVideoFromPhase(phaseIndex, videoIndex)}
+                                      className="border-red-300 text-red-600 hover:bg-red-100"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Coursera Courses Section */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <h6 className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                                  <BookOpen className="w-4 h-4" />
+                                  Online Courses ({phase.coursera_links.length})
+                                </h6>
+                                <Button
+                                  onClick={() => {
+                                    const newCourse: CourseraLink = {
+                                      id: Date.now().toString(),
+                                      title: 'New Course',
+                                      url: '',
+                                      description: 'Course description',
+                                      provider: 'Coursera',
+                                      duration: 'Self-paced',
+                                      difficulty: 'Intermediate',
+                                      order: phase.coursera_links.length
+                                    };
+                                    const updatedPhases = [...editingRoadmap.phases];
+                                    updatedPhases[phaseIndex].coursera_links.push(newCourse);
+                                    setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                  }}
+                                  size="sm"
+                                  className="bg-purple-500 hover:bg-purple-600 text-white"
+                                >
+                                  <Plus className="w-3 h-3 mr-1" />
+                                  Add Course
+                                </Button>
+                              </div>
+                              <div className="space-y-2">
+                                {phase.coursera_links.map((course, courseIndex) => (
+                                  <div key={course.id} className="flex gap-2 items-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded">
+                                    <Input
+                                      value={course.title}
+                                      onChange={(e) => {
+                                        const updatedPhases = [...editingRoadmap.phases];
+                                        updatedPhases[phaseIndex].coursera_links[courseIndex].title = e.target.value;
+                                        setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                      }}
+                                      className="flex-1 bg-purple-100 dark:bg-purple-800/50 border-purple-300 dark:border-purple-600 text-purple-800 dark:text-purple-200 text-sm"
+                                      placeholder="Course title"
+                                    />
+                                    <Input
+                                      value={course.url}
+                                      onChange={(e) => {
+                                        const updatedPhases = [...editingRoadmap.phases];
+                                        updatedPhases[phaseIndex].coursera_links[courseIndex].url = e.target.value;
+                                        setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                      }}
+                                      className="w-48 bg-purple-100 dark:bg-purple-800/50 border-purple-300 dark:border-purple-600 text-purple-800 dark:text-purple-200 text-sm"
+                                      placeholder="Course URL"
+                                    />
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => deleteCourseFromPhase(phaseIndex, courseIndex)}
+                                      className="border-purple-300 text-purple-600 hover:bg-purple-100"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* IDE Projects Section */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <h6 className="font-medium text-green-700 dark:text-green-300 flex items-center gap-2">
+                                  <Laptop className="w-4 h-4" />
+                                  Coding Projects ({phase.ide_projects.length})
+                                </h6>
+                                <Button
+                                  onClick={() => {
+                                    const newProject: IDEProject = {
+                                      id: Date.now().toString(),
+                                      title: 'New Project',
+                                      description: 'Project description',
+                                      language: 'JavaScript',
+                                      difficulty: 'Intermediate',
+                                      starter_code: '',
+                                      solution_code: '',
+                                      instructions: 'Project instructions',
+                                      order: phase.ide_projects.length
+                                    };
+                                    const updatedPhases = [...editingRoadmap.phases];
+                                    updatedPhases[phaseIndex].ide_projects.push(newProject);
+                                    setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                  }}
+                                  size="sm"
+                                  className="bg-green-500 hover:bg-green-600 text-white"
+                                >
+                                  <Plus className="w-3 h-3 mr-1" />
+                                  Add Project
+                                </Button>
+                              </div>
+                              <div className="space-y-2">
+                                {phase.ide_projects.map((project, projectIndex) => (
+                                  <div key={project.id} className="space-y-2 p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                                    <div className="flex gap-2 items-center">
+                                      <Input
+                                        value={project.title}
+                                        onChange={(e) => {
+                                          const updatedPhases = [...editingRoadmap.phases];
+                                          updatedPhases[phaseIndex].ide_projects[projectIndex].title = e.target.value;
+                                          setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                        }}
+                                        className="flex-1 bg-green-100 dark:bg-green-800/50 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 text-sm"
+                                        placeholder="Project title"
+                                      />
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => deleteProjectFromPhase(phaseIndex, projectIndex)}
+                                        className="border-green-300 text-green-600 hover:bg-green-100"
+                                      >
+                                        <Trash2 className="w-3 h-3" />
+                                      </Button>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <Input
+                                        value={project.language}
+                                        onChange={(e) => {
+                                          const updatedPhases = [...editingRoadmap.phases];
+                                          updatedPhases[phaseIndex].ide_projects[projectIndex].language = e.target.value;
+                                          setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                        }}
+                                        className="bg-green-100 dark:bg-green-800/50 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 text-sm"
+                                        placeholder="Language"
+                                      />
+                                      <Select
+                                        value={project.difficulty}
+                                        onValueChange={(value: 'Beginner' | 'Intermediate' | 'Advanced') => {
+                                          const updatedPhases = [...editingRoadmap.phases];
+                                          updatedPhases[phaseIndex].ide_projects[projectIndex].difficulty = value;
+                                          setEditingRoadmap({ ...editingRoadmap, phases: updatedPhases });
+                                        }}
+                                      >
+                                        <SelectTrigger className="bg-green-100 dark:bg-green-800/50 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 text-sm">
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-green-50 dark:bg-green-900 border-green-300 dark:border-green-600">
+                                          <SelectItem value="Beginner" className="text-green-800 dark:text-green-200">Beginner</SelectItem>
+                                          <SelectItem value="Intermediate" className="text-green-800 dark:text-green-200">Intermediate</SelectItem>
+                                          <SelectItem value="Advanced" className="text-green-800 dark:text-green-200">Advanced</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         ))}

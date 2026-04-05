@@ -402,10 +402,11 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                     }`}>
                       <Card 
                         className={`
-                          w-full lg:w-96 
+                          w-full lg:w-96 min-h-[280px] max-h-[320px] 
                           transition-all 
                           duration-300 
                           border-2
+                          flex flex-col
                           ${isCurrentPhase 
                             ? 'ring-4 ring-blue-500 shadow-xl border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30' 
                             : unlockStatus.isCompleted 
@@ -465,9 +466,9 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                           </div>
                         </CardHeader>
                         
-                        <CardContent className="pt-0">
+                        <CardContent className="flex-1 flex flex-col justify-between p-4">
                           {/* Content Summary */}
-                          <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div className="grid grid-cols-3 gap-4 text-sm mb-4">
                             <div className="flex items-center gap-2 text-gray-600 p-2 border border-gray-200 rounded">
                               <Video className="w-4 h-4" />
                               {phase.youtube_videos.length}
@@ -483,7 +484,7 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
                           </div>
                           
                           {/* Progress Bar */}
-                          <div className="mt-4">
+                          <div className="mt-auto">
                             <div className="flex items-center justify-between text-sm mb-2">
                               <span className="text-muted-foreground">Progress</span>
                               <span className="font-medium">{progress.toFixed(0)}%</span>
@@ -577,7 +578,7 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
             const phaseProgress = phaseProgresses[phase.id];
             
             return (
-              <Card key={phase.id} className={`transition-all duration-300 border-2 ${
+              <Card key={phase.id} className={`transition-all duration-300 border-2 min-h-[200px] ${
                 unlockStatus.isCompleted 
                   ? 'border-green-300 bg-green-50 dark:bg-green-900/10' 
                   : unlockStatus.isUnlocked
