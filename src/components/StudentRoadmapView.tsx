@@ -260,6 +260,78 @@ const StudentRoadmapView: React.FC<StudentRoadmapViewProps> = ({
     );
   }
 
+  if (selectedCourse) {
+    return (
+      <div className={`space-y-6 ${className}`}>
+        <Button
+          variant="outline"
+          onClick={() => setSelectedCourse(null)}
+          className="mb-4"
+        >
+          ← Back to Phase
+        </Button>
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-xl">{selectedCourse.title}</CardTitle>
+              <Button variant="ghost" onClick={() => setSelectedCourse(null)}>
+                ×
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6">{selectedCourse.description}</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Badge className={`${getDifficultyColor(selectedCourse.difficulty)}`}>
+                  {selectedCourse.difficulty}
+                </Badge>
+                <Badge variant="outline" className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  {selectedCourse.duration}
+                </Badge>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Provider: {selectedCourse.provider}
+              </div>
+            </div>
+            <div className="flex gap-4 mt-6">
+              <Button 
+                onClick={() => window.open(selectedCourse.url, '_blank')}
+                className="bg-purple-500 hover:bg-purple-600 text-white"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open Course
+              </Button>
+              {currentPhase && (
+                <Button 
+                  onClick={() => {
+                    markContentComplete(currentPhase.id, 'course', selectedCourse.id);
+                    setSelectedCourse(null);
+                  }}
+                  disabled={isContentCompleted(currentPhase.id, 'course', selectedCourse.id)}
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                >
+                  {isContentCompleted(currentPhase.id, 'course', selectedCourse.id) ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Completed
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Mark as Complete
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-8 p-6 ${className}`}>
       {/* Roadmap Header */}
