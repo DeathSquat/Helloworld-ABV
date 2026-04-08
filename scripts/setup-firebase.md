@@ -58,18 +58,3 @@ The system now supports three roles:
 2. Verify role-based routing works correctly
 3. Test admin dashboard functionality
 4. Confirm Firestore rules are working
-
-## Environment Variables
-
-Make sure your `.env.local` contains:
-```
-VITE_FIREBASE_API_KEY=AIzaSyBV5kBeO0yJvYvBw7T8uqrAufqXEDUqduc
-VITE_FIREBASE_AUTH_DOMAIN=helloworld-2756c.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=helloworld-2756c
-VITE_FIREBASE_STORAGE_BUCKET=helloworld-2756c.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=48391307034
-VITE_FIREBASE_APP_ID=1:48391307034:web:f2568326156cd4520176a3
-VITE_FIREBASE_MEASUREMENT_ID=G-GYCDJEHYCT
-```
-
-Note: The Firebase config in `src/utils/firebase.ts` is already updated with the new credentials.
