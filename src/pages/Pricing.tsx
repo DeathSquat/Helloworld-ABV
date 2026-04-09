@@ -48,8 +48,8 @@ const Pricing = () => {
     {
       name: 'Pro Developer',
       description: 'For serious learners who want unlimited access',
-      monthlyPrice: 29,
-      yearlyPrice: 290, // ~$24/month
+      monthlyPrice: 300,
+      yearlyPrice: 3000, // ~$24/month
       icon: Zap,
       color: 'text-golden',
       bgColor: 'bg-golden/10',
@@ -73,8 +73,8 @@ const Pricing = () => {
     {
       name: 'Enterprise Master',
       description: 'For teams and organizations',
-      monthlyPrice: 99,
-      yearlyPrice: 990, // ~$82.5/month
+      monthlyPrice: 700,
+      yearlyPrice: 7800, // ~$82.5/month
       icon: Crown,
       color: 'text-purple-400',
       bgColor: 'bg-purple-500/10',
@@ -125,7 +125,7 @@ const Pricing = () => {
   const getPrice = (plan: any) => {
     if (plan.monthlyPrice === 0) return 'Free';
     const price = isYearly ? plan.yearlyPrice / 12 : plan.monthlyPrice;
-    return `$${Math.round(price)}`;
+    return `₹${Math.round(price)}`;
   };
 
   return (
